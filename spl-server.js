@@ -2,23 +2,44 @@
 // Module imports
 const http = require('http');
 const express = require("express");
+const router = express.Router();
+const path = require("path");
 
 
 // Express app initilized
 const app = express();
 
-// Middleware for the app
-app.use(express.json());
-
+// Variable declarations
 const host = "localhost";
 const port = 5000;
 
-app.get("/basicGET", (req,res)=>{
+// Middleware fn
+const midlware = (req,res,next) => {
 
-    console.log("GET request made to basicGET route!");
-    res.send("This is the Spl Express server!")
+    console.log(`Middleware function accessed at time ${new Date().toLocaleString()}`);
+    next();
+};
+
+// App using the above middleware
+app.use(midlware);
+
+
+// Setting template views
+
+app.set("views", path.join(__dirname, "views"));
+app.engine("html", require("ejs").renderFile);
+app.set("view engine","html");
+
+
+// App endpoint
+
+app.get("/", (req,res)=>{
+
+    res.render("index");
 
 });
+
+
 
 app.listen(port, ()=>{
     console.log(`Spl-server is running on http://${host}:${port}.......`);
